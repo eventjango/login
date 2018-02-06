@@ -239,9 +239,7 @@ public class StreamTest {
         .stream()
         .flatMap(o -> Stream.of(o.toString()));
 
-
         long sum = values.collect(Collectors.summarizingInt(String::length)).getSum();
-
 
         String value =
         Stream
@@ -255,7 +253,120 @@ public class StreamTest {
     }
 
 
+    @Test
+    public void findFirstAndFindAny(){
 
+        Supplier<Stream<String>> streamSupplier = () ->
+                Stream
+                .empty()
+                .collect(Collectors.toCollection(() -> Arrays.asList("jack", "may", "kevin")))
+                .stream()
+                .flatMap(o -> Stream.of(o.toString()));
+
+        Optional<String> first =
+
+        streamSupplier
+                .get()
+                .filter(s -> s.substring(1, 2).equals("a"))
+                .findFirst();
+
+        System.out.println("first : " + first.orElse(""));
+
+
+        Optional<String> any =
+        streamSupplier
+                .get()
+                .filter(s -> s.substring(1, 2).equals("a"))
+                .parallel()
+                .findAny();
+
+        System.out.println("any : " + any.orElse(""));
+    }
+
+    @Test
+    public void anyMatch(){
+
+        boolean result =
+
+        Stream
+        .empty()
+        .collect(Collectors.toCollection(() -> Arrays.asList("kevin", "jack")))
+        .parallelStream()
+        .flatMap(o -> Stream.of(o.toString()))
+        .anyMatch(o -> o.contains("jack"));
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void noneMatch(){
+
+        boolean result =
+
+        Stream
+        .empty()
+        .collect(Collectors.toCollection(() -> Arrays.asList("may", "peter")))
+        .parallelStream()
+        .flatMap(o -> Stream.of(o.toString()))
+        .noneMatch(o -> o.contains("kevin"));
+
+        assertTrue(result);
+
+    }
+
+
+    @Test
+    public void toArray(){
+
+        String[] result =
+
+        Stream
+        .empty()
+        .collect(Collectors.toCollection(() -> Arrays.asList("kevin", "jack")))
+        .parallelStream()
+        .flatMap(o -> Stream.of(o.toString()))
+        .toArray(n -> new String [n]);
+
+        System.out.println(Arrays.toString(result));
+    }
+
+    @Test
+    public void joining(){
+
+        String value =
+
+        Stream
+        .empty()
+        .collect(Collectors.toCollection(() -> Arrays.asList("jack", "may")))
+        .parallelStream()
+        .map(o -> o.toString())
+                .sorted(Comparator.comparing(String::length, Comparator.naturalOrder()))
+        .collect(Collectors.joining());
+
+        System.out.println(value);
+    }
+
+
+    /**
+     * 집계로 리듀싱
+     */
+    @Test
+    public void summarizing(){
+
+        IntSummaryStatistics intSummaryStatistics =
+
+        Stream
+        .empty()
+        .collect(Collectors.toCollection(() -> Arrays.asList("kevin", "may")))
+        .parallelStream()
+        .map(o -> o.toString())
+        .collect(Collectors.summarizingInt(String::length));
+
+        System.out.println("sum : " + intSummaryStatistics.getSum());
+        System.out.println("max : " + intSummaryStatistics.getMax());
+        System.out.println("min : " + intSummaryStatistics.getMin());
+        System.out.println("average : " + intSummaryStatistics.getAverage());
+    }
 
 
 }
