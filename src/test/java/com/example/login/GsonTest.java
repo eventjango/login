@@ -27,13 +27,8 @@ public class GsonTest {
         JsonObject jsonObject = gson.fromJson(gson.toJson(students.get(0)), JsonObject.class);
 
         System.out.println(jsonObject.get("name"));
-
     }
-
-
 }
-
-
 
 @Data
 class Student{
