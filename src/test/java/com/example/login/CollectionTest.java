@@ -1,11 +1,12 @@
 package com.example.login;
 
+
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
+import static org.junit.Assert.*;
 import org.junit.Test;
 
 import java.util.*;
-
-import static org.junit.Assert.*;
 
 @Slf4j
 public class CollectionTest {
@@ -23,25 +24,26 @@ public class CollectionTest {
         assertTrue(collection.contains("kevin"));
         assertEquals(1, collection.size());
 
-        collection.add("jack");
+        collection.add("may");
     }
 
+
     /**
-     * Collection.addAll(Collection</? extends E> c) : boolean
+     * Collection.add(Collection</? extends E> c) : boolean
      */
     @Test
     public void addAll(){
 
         Collection<? super String> collection = new ArrayList<>(Arrays.asList("kevin"));
 
+        assertNotNull(collection);
         assertTrue(collection.contains("kevin"));
         assertEquals(1, collection.size());
 
-        collection.addAll(Arrays.asList("jack", "may"));
-
+        assertTrue(collection.addAll(Arrays.asList("may", "jack")));
         assertEquals(3, collection.size());
-        assertTrue(collection.containsAll(Arrays.asList("may", "kevin", "jack")));
     }
+
 
     /**
      * Collection.remove(Object o) : boolean
@@ -55,11 +57,14 @@ public class CollectionTest {
         assertEquals(1, collection.size());
 
         assertTrue(collection.remove("kevin"));
+
+        assertTrue(!collection.contains("kevin"));
         assertTrue(collection.isEmpty());
     }
 
+
     /**
-     * Collection.removeAll(Collection</?> c) : boolean
+     * Collection.remove(Collection</?> c) : boolean
      */
     @Test
     public void removeAll(){
@@ -69,44 +74,48 @@ public class CollectionTest {
         collection.addAll(Arrays.asList("kevin", "jack"));
         assertEquals(3, collection.size());
 
-        assertTrue(collection.removeAll(new ArrayDeque<>(Arrays.asList("may", "kevin"))));
-        assertTrue(collection.contains("jack"));
+        assertTrue(collection.removeAll(new ArrayDeque<>(Arrays.asList("jack", "may"))));
+        assertTrue(collection.contains("kevin"));
         assertEquals(1, collection.size());
 
         collection.clear();
-
-        assertTrue(Objects.nonNull(collection));
         assertTrue(collection.isEmpty());
+        assertTrue(Objects.nonNull(collection));
     }
+
 
     /**
      * Collection.retainAll(Collection</?> c) : boolean
      */
     @Test
+    @Synchronized
     public void retainAll(){
 
-        Collection<? super String> collection = new ArrayDeque<>(Arrays.asList("kevin", "may"));
+        Collection<? super String> collection = new ArrayList<>(Arrays.asList("kevin", "may"));
 
         collection.add("jack");
         assertEquals(3, collection.size());
 
-        collection.retainAll(Arrays.asList("may", "kevin"));
+        collection.retainAll(Arrays.asList("may", "jack"));
         assertEquals(2, collection.size());
-
-        assertTrue(!collection.contains("jack"));
+        assertTrue(!collection.contains("kevin"));
     }
 
 
     /**
      * Collection.removeIf(Predicate</? super E> filter) : boolean
      */
+
     @Test
     public void removeIf(){
 
         Collection<? super String> collection = new ArrayList<>(Arrays.asList("kevin"));
-        collection.addAll(Arrays.asList("jack", "may"));
 
-        assertTrue(collection.removeIf(s -> ((String)s).startsWith("j")));
+        collection.addAll(Arrays.asList("may", "jack"));
+        assertEquals(3, collection.size());
+
+        collection.removeIf(s -> ((String) s).startsWith("j"));
+
         assertTrue(!collection.contains("jack"));
         assertTrue(collection.containsAll(Arrays.asList("kevin", "may")));
         assertEquals(2, collection.size());
@@ -122,11 +131,13 @@ public class CollectionTest {
         Collection<? extends String> collection = Arrays.asList("kevin", "jack", "may");
         collection = Collections.unmodifiableCollection(collection);
 
-        Iterator<String> iterator = (Iterator<String>) collection.iterator();
+        Iterator<? extends String> iterator = collection.iterator();
 
         while (iterator.hasNext()){
-            String element = iterator.next();
-            log.debug(element.toUpperCase());
+
+            String o = iterator.next();
+            log.warn(o.toUpperCase());
+            log.debug(o);
         }
     }
 
@@ -142,18 +153,21 @@ public class CollectionTest {
         Object[] resultAndObject = collection.toArray();
         String[] resultAndString = collection.toArray(new String[]{});
 
+        log.warn(Arrays.toString(resultAndObject));
+        log.debug(Arrays.toString(resultAndString));
+
         assertTrue(
+
                 Arrays.stream(resultAndObject)
                 .findAny()
                 .get() instanceof Object
         );
 
         assertTrue(
+
                 Arrays.stream(resultAndString)
                 .findAny()
                 .get() instanceof String
         );
     }
-
-
 }
