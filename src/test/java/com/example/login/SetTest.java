@@ -94,6 +94,8 @@ public class SetTest {
         assertEquals(3, treeSet.tailSet("may").size());
         assertEquals(2, treeSet.tailSet("jack").size());
         assertEquals(1, treeSet.tailSet("kevin").size());
+
+        assertEquals(2, treeSet.subSet("may", "kevin").size());
     }
 
 
