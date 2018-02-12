@@ -1,13 +1,13 @@
 package com.example.login;
 
 
-import com.sun.org.apache.bcel.internal.generic.ARRAYLENGTH;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 @Slf4j
